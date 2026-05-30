@@ -92,7 +92,6 @@ public class EnemyManager implements Runnable{
 				    Position spawnPos = pickFreeSpawnPoint();
 				    
 				    if(spawnPos != null) {
-				    	System.out.println("SPAWN at: (" + spawnPos.getX() + ", " + spawnPos.getY() + ")");
 				    	Position spawnCopy = new Position(spawnPos.getX(), spawnPos.getY());
 				        EnemyTank enemy = new EnemyTank(spawnCopy, Direction.DOWN,enemySpeed);
 				        gameLoop.addEnemyTank(enemy);
