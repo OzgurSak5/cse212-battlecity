@@ -16,10 +16,13 @@ public class EnemyManager implements Runnable{
 	private ArrayList<Thread> aiThreads;
 	private ArrayList<EnemyAIThread> aiTasks;
 	private Position[] spawnPoints;
+	private int maxOnScreen;
+	private long spawnIntervalMs;
+	private int enemySpeed;
 	
-	private static final long SPAWN_INTERVAL_MS = 1500;
+
 	private static final int TOTAL_ENEMIES = GameConstants.ENEMIES_PER_LEVEL;
-	private static final int MAX_ON_SCREEN = GameConstants.MAX_ENEMIES_ON_SCREEN;
+
 	
 	public EnemyManager(GameLoop gameLoop, GameMap gameMap, Difficulty difficulty) {
 		this.gameLoop = gameLoop;
@@ -30,10 +33,37 @@ public class EnemyManager implements Runnable{
 		running = true;
 		aiThreads = new ArrayList<>();
 		aiTasks = new ArrayList<>();
-		spawnPoints = new Position[3];
+		spawnPoints = new Position[5];
 		spawnPoints[0] = new Position(0, 0);
-		spawnPoints[1] = new Position((GameConstants.MAP_WIDTH/2) * GameConstants.TILE_SIZE, 0);
-		spawnPoints[2] = new Position((GameConstants.MAP_WIDTH-1) * GameConstants.TILE_SIZE, 0);
+		spawnPoints[1] = new Position(3 * GameConstants.TILE_SIZE, 0);
+		spawnPoints[2] = new Position((GameConstants.MAP_WIDTH/2) * GameConstants.TILE_SIZE, 0);
+		spawnPoints[3] = new Position(9 * GameConstants.TILE_SIZE, 0);
+		spawnPoints[4] = new Position((GameConstants.MAP_WIDTH-1) * GameConstants.TILE_SIZE, 0);
+		configureForDifficulty();
+	}
+	
+	private void configureForDifficulty() {
+	    switch(difficulty) {
+	        case EASY:
+	            maxOnScreen = 3;
+	            spawnIntervalMs = 1500;
+	            enemySpeed = 2;
+	            break;
+	        case MEDIUM:
+	            maxOnScreen = 4;
+	            spawnIntervalMs = 1000;
+	            enemySpeed = 3;
+	            break;
+	        case HARD:
+	            maxOnScreen = 4;
+	            spawnIntervalMs = 700;
+	            enemySpeed = 4;
+	            break;
+	        default:
+	            maxOnScreen = 3;
+	            spawnIntervalMs = 1500;
+	            enemySpeed = 2;
+	    }
 	}
 
 	
@@ -54,15 +84,17 @@ public class EnemyManager implements Runnable{
 				}
 				
 				if(enemiesRemaining == 0) {
-					Thread.sleep(SPAWN_INTERVAL_MS);
+					Thread.sleep(spawnIntervalMs);
 					continue;
 				}
 				
-				if(countActiveEnemies() < MAX_ON_SCREEN) {
+				if(countActiveEnemies() < maxOnScreen) {
 				    Position spawnPos = pickFreeSpawnPoint();
 				    
 				    if(spawnPos != null) {
-				        EnemyTank enemy = new EnemyTank(spawnPos, Direction.DOWN, getEnemySpeedForDifficulty());
+				    	System.out.println("SPAWN at: (" + spawnPos.getX() + ", " + spawnPos.getY() + ")");
+				    	Position spawnCopy = new Position(spawnPos.getX(), spawnPos.getY());
+				        EnemyTank enemy = new EnemyTank(spawnCopy, Direction.DOWN,enemySpeed);
 				        gameLoop.addEnemyTank(enemy);
 				        
 				        EnemyAIThread ai = new EnemyAIThread(enemy, gameLoop);
@@ -74,7 +106,7 @@ public class EnemyManager implements Runnable{
 				        enemiesRemaining--;
 				    }
 				}
-				Thread.sleep(SPAWN_INTERVAL_MS);
+				Thread.sleep(spawnIntervalMs);
 			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
 				running = false;
@@ -139,19 +171,6 @@ public class EnemyManager implements Runnable{
 	    
 	    int idx = (int)(Math.random() * free.size());
 	    return free.get(idx);
-	}
-	
-	private int getEnemySpeedForDifficulty() {
-		switch (difficulty) {
-		case EASY:
-			return 1;
-		case MEDIUM:
-			return 2;
-		case HARD:
-			return 3;
-		default:
-			return 1;
-		}
 	}
 	
 	public synchronized int getEnemiesRemaining() {

@@ -13,7 +13,7 @@ public class PlayerTank extends Tank{
 	private boolean shieldActive;
 	
 	public PlayerTank(Position position, Direction direction) {
-		super(position, direction, 2);
+		super(position, direction, 3);
 		this.lives = GameConstants.INITIAL_LIVES;
 		this.starCount = 0;
 		this.shieldActive = false;
@@ -65,11 +65,11 @@ public class PlayerTank extends Tank{
 	}
 	@Override
 	public int getWidth() {
-		return GameConstants.TILE_SIZE;
+		return GameConstants.TILE_SIZE - 8;
 	}
 	@Override
 	public int getHeight() {
-		return GameConstants.TILE_SIZE;
+		return GameConstants.TILE_SIZE - 8;
 	}
 
 	@Override

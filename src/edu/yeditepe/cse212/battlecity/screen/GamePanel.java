@@ -70,16 +70,24 @@ public class GamePanel extends JPanel implements KeyListener{
 		}
 		
 		GameStatus gameStatus = gameLoop.getStatus();
-		
-		if (gameStatus == GameStatus.GAME_OVER) {
+	    
+	    if(gameStatus == GameStatus.GAME_OVER) {
 	        g.setColor(Color.RED);
-	        g.setFont(new Font("Arial", Font.BOLD, 48));
-	        g.drawString("GAME OVER", 70, 200);
+	        g.setFont(new Font("Arial", Font.BOLD, 64));
+	        String text = "GAME OVER";
+	        int textWidth = g.getFontMetrics().stringWidth(text);
+	        int x = (GameConstants.BOARD_WIDTH - textWidth) / 2;
+	        int y = GameConstants.BOARD_HEIGHT / 2;
+	        g.drawString(text, x, y);
 	    }
-	    else if (gameStatus == GameStatus.LEVEL_COMPLETED) {
+	    else if(gameStatus == GameStatus.LEVEL_COMPLETED) {
 	        g.setColor(Color.GREEN);
-	        g.setFont(new Font("Arial", Font.BOLD, 36));
-	        g.drawString("LEVEL COMPLETE!", 50, 200);
+	        g.setFont(new Font("Arial", Font.BOLD, 48));
+	        String text = "LEVEL COMPLETE!";
+	        int textWidth = g.getFontMetrics().stringWidth(text);
+	        int x = (GameConstants.BOARD_WIDTH - textWidth) / 2;
+	        int y = GameConstants.BOARD_HEIGHT / 2;
+	        g.drawString(text, x, y);
 	    }
 	}
 	

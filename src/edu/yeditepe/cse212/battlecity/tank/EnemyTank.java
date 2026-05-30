@@ -20,12 +20,12 @@ public class EnemyTank extends Tank{
 
 	@Override
 	public int getWidth() {
-		return GameConstants.TILE_SIZE;
+		return GameConstants.TILE_SIZE - 8;
 	}
 
 	@Override
 	public int getHeight() {
-		return GameConstants.TILE_SIZE;
+		return GameConstants.TILE_SIZE - 8;
 	}
 
 	@Override
