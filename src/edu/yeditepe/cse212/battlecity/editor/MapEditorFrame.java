@@ -18,6 +18,10 @@ import javax.swing.JRadioButton;
 import edu.yeditepe.cse212.battlecity.exception.MapLoadException;
 import edu.yeditepe.cse212.battlecity.map.GameMap;
 import edu.yeditepe.cse212.battlecity.map.MapManager;
+import edu.yeditepe.cse212.battlecity.tile.BaseTile;
+import edu.yeditepe.cse212.battlecity.tile.Bush;
+import edu.yeditepe.cse212.battlecity.tile.EmptyTile;
+import edu.yeditepe.cse212.battlecity.tile.Tile;
 
 public class MapEditorFrame extends JFrame{
 	private MapEditorPanel editorPanel;
@@ -128,6 +132,14 @@ public class MapEditorFrame extends JFrame{
             }
         });
         
+        JButton bonusButton = new JButton("Save as Bonus");
+        bonusButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                saveAsBonus();
+            }
+        });
+        
         JButton clearButton = new JButton("Clear");
         clearButton.addActionListener(new ActionListener() {
             @Override
@@ -144,6 +156,7 @@ public class MapEditorFrame extends JFrame{
         
         panel.add(saveButton);
         panel.add(loadButton);
+        panel.add(bonusButton);
         panel.add(clearButton);
         
         return panel;
@@ -174,6 +187,51 @@ public class MapEditorFrame extends JFrame{
         catch(MapLoadException e) {
             JOptionPane.showMessageDialog(this,
                 "Failed to save: " + e.getMessage(),
+                "Save Error",
+                JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    
+    private void saveAsBonus() {
+        Tile[][] tiles = editorPanel.getTiles();
+
+        int baseCount = 0;
+        for(int y = 0; y < tiles.length; y++) {
+            for(int x = 0; x < tiles[y].length; x++) {
+                if(tiles[y][x] instanceof BaseTile) {
+                    baseCount++;
+                }
+            }
+        }
+
+        if(baseCount != 1) {
+            JOptionPane.showMessageDialog(this,
+                "Bonus map must have exactly ONE Base (eagle). Found: " + baseCount,
+                "Invalid Map",
+                JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        Tile spawn = tiles[12][4];
+        if(!(spawn instanceof EmptyTile || spawn instanceof Bush)) {
+            JOptionPane.showMessageDialog(this,
+                "Player spawn (column 5, bottom row) must be Empty or Bush.\n"
+                + "Leave that tile clear so the tank does not spawn inside a wall.",
+                "Invalid Map",
+                JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        try {
+            MapManager.saveMap("levels/bonus.txt", tiles);
+            JOptionPane.showMessageDialog(this,
+                "Bonus map saved!\nBeat Level 3 to play it as the bonus level.",
+                "Saved",
+                JOptionPane.INFORMATION_MESSAGE);
+        }
+        catch(MapLoadException e) {
+            JOptionPane.showMessageDialog(this,
+                "Failed to save bonus: " + e.getMessage(),
                 "Save Error",
                 JOptionPane.ERROR_MESSAGE);
         }

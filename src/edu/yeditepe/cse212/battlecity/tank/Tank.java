@@ -1,6 +1,7 @@
 package edu.yeditepe.cse212.battlecity.tank;
 
 import java.awt.Color;
+import java.awt.image.BufferedImage;
 
 import edu.yeditepe.cse212.battlecity.game.Bullet;
 import edu.yeditepe.cse212.battlecity.game.BulletOwner;
@@ -25,6 +26,7 @@ public abstract class Tank {
     public abstract int getWidth();
     public abstract int getHeight();
     public abstract BulletOwner getBulletOwner();
+    public abstract BufferedImage getSprite();
     
     public Bullet shoot() {
     	int bulletX = 0;

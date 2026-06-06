@@ -11,6 +11,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
 import edu.yeditepe.cse212.battlecity.editor.MapEditorFrame;
+import edu.yeditepe.cse212.battlecity.screen.AboutDialog;
 import edu.yeditepe.cse212.battlecity.screen.GameFrame;
 import edu.yeditepe.cse212.battlecity.screen.HelpDialog;
 import edu.yeditepe.cse212.battlecity.screen.HighScoreFrame;
@@ -64,6 +65,23 @@ public class GameMenuBar extends JMenuBar{
 	        }
 	    });
 	    
+	    JMenuItem optionsItem = new JMenuItem("Options");
+	    optionsItem.addActionListener(new ActionListener() {
+	        @Override
+	        public void actionPerformed(ActionEvent e) {
+	            OptionsDialog dialog = new OptionsDialog(gameFrame);
+	            dialog.setVisible(true);
+	        }
+	    });
+	    
+	    JMenuItem mainMenuItem = new JMenuItem("Main Menu");
+	    mainMenuItem.addActionListener(new ActionListener() {
+	        @Override
+	        public void actionPerformed(ActionEvent e) {
+	            gameFrame.returnToTitle();
+	        }
+	    });
+	    
 		JMenuItem exitItem = new JMenuItem("Exit");
 		exitItem.addActionListener(new ActionListener() {
 			@Override
@@ -74,6 +92,8 @@ public class GameMenuBar extends JMenuBar{
 		
 		gameMenu.add(newGameItem);
 		gameMenu.add(pauseItem);
+		gameMenu.add(optionsItem);
+		gameMenu.add(mainMenuItem);
 		gameMenu.addSeparator();
 		gameMenu.add(exitItem);
 		add(gameMenu);
@@ -133,12 +153,11 @@ public class GameMenuBar extends JMenuBar{
 		JMenuItem aboutItem = new JMenuItem("About");
 		
 		aboutItem.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				OptionsDialog dialog = new OptionsDialog(gameFrame);
+		    @Override
+		    public void actionPerformed(ActionEvent e) {
+		        AboutDialog dialog = new AboutDialog(gameFrame);
 		        dialog.setVisible(true);
-			}
+		    }
 		});
 		
 		helpMenu.add(helpItem);

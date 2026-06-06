@@ -19,6 +19,7 @@ public class EnemyManager implements Runnable{
 	private int maxOnScreen;
 	private long spawnIntervalMs;
 	private int enemySpeed;
+	private long aiDecisionInterval;
 	
 
 	private static final int TOTAL_ENEMIES = GameConstants.ENEMIES_PER_LEVEL;
@@ -48,21 +49,25 @@ public class EnemyManager implements Runnable{
 	            maxOnScreen = 3;
 	            spawnIntervalMs = 1500;
 	            enemySpeed = 2;
+	            aiDecisionInterval = 900;
 	            break;
 	        case MEDIUM:
 	            maxOnScreen = 4;
-	            spawnIntervalMs = 1000;
+	            spawnIntervalMs = 1200;
 	            enemySpeed = 3;
+	            aiDecisionInterval = 800;
 	            break;
 	        case HARD:
 	            maxOnScreen = 4;
-	            spawnIntervalMs = 700;
+	            spawnIntervalMs = 1000;
 	            enemySpeed = 4;
+	            aiDecisionInterval = 700;
 	            break;
 	        default:
 	            maxOnScreen = 3;
 	            spawnIntervalMs = 1500;
 	            enemySpeed = 2;
+	            aiDecisionInterval = 900;
 	    }
 	}
 
@@ -71,6 +76,7 @@ public class EnemyManager implements Runnable{
 	public void run() {
 		while(running) {
 			try {
+				cleanupDeadThreads();
 				GameStatus status = gameLoop.getStatus();
 				
 				if(status == GameStatus.GAME_OVER || status == GameStatus.LEVEL_COMPLETED) {
@@ -96,7 +102,7 @@ public class EnemyManager implements Runnable{
 				        EnemyTank enemy = new EnemyTank(spawnCopy, Direction.DOWN,enemySpeed);
 				        gameLoop.addEnemyTank(enemy);
 				        
-				        EnemyAIThread ai = new EnemyAIThread(enemy, gameLoop);
+				        EnemyAIThread ai = new EnemyAIThread(enemy, gameLoop, aiDecisionInterval);
 				        Thread t = new Thread(ai);
 				        aiTasks.add(ai);
 				        aiThreads.add(t);
@@ -170,6 +176,21 @@ public class EnemyManager implements Runnable{
 	    
 	    int idx = (int)(Math.random() * free.size());
 	    return free.get(idx);
+	}
+	
+	private void cleanupDeadThreads() {
+	    ArrayList<Thread> liveThreads = new ArrayList<>();
+	    ArrayList<EnemyAIThread> liveTasks = new ArrayList<>();
+	    
+	    for(int i = 0; i < aiThreads.size(); i++) {
+	        if(aiThreads.get(i).isAlive()) {
+	            liveThreads.add(aiThreads.get(i));
+	            liveTasks.add(aiTasks.get(i));
+	        }
+	    }
+	    
+	    aiThreads = liveThreads;
+	    aiTasks = liveTasks;
 	}
 	
 	public synchronized int getEnemiesRemaining() {

@@ -6,14 +6,14 @@ public class EnemyAIThread implements Runnable{
 	private EnemyTank enemyTank;
 	private GameLoop gameLoop;
 	private boolean running;
-	private static final long DECISION_INTERVAL_MS = 1000;
+	private long decisionInterval;
 	
 	
-	
-	public EnemyAIThread(EnemyTank enemyTank, GameLoop gameLoop) {
+	public EnemyAIThread(EnemyTank enemyTank, GameLoop gameLoop, long decisionInterval) {
 		this.enemyTank = enemyTank;
 		this.gameLoop = gameLoop;
 		running = true;
+		this.decisionInterval = decisionInterval;
 	}
 
 
@@ -60,7 +60,7 @@ public class EnemyAIThread implements Runnable{
 			}
 			
 			try {
-				Thread.sleep(DECISION_INTERVAL_MS);
+				Thread.sleep(decisionInterval);
 			}
 			catch (InterruptedException e) {
 				Thread.currentThread().interrupt();

@@ -4,12 +4,16 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
 
 import edu.yeditepe.cse212.battlecity.game.Bullet;
+import edu.yeditepe.cse212.battlecity.game.BulletOwner;
 import edu.yeditepe.cse212.battlecity.game.Direction;
 import edu.yeditepe.cse212.battlecity.game.GameConstants;
 import edu.yeditepe.cse212.battlecity.game.GameLoop;
@@ -20,7 +24,9 @@ import edu.yeditepe.cse212.battlecity.powerup.PowerUp;
 import edu.yeditepe.cse212.battlecity.powerup.PowerUpManager;
 import edu.yeditepe.cse212.battlecity.tank.EnemyTank;
 import edu.yeditepe.cse212.battlecity.tank.PlayerTank;
+import edu.yeditepe.cse212.battlecity.tile.Bush;
 import edu.yeditepe.cse212.battlecity.tile.Tile;
+import edu.yeditepe.cse212.battlecity.util.ImageLoader;
 
 public class GamePanel extends JPanel implements KeyListener{
 	private GameMap gameMap;
@@ -42,6 +48,25 @@ public class GamePanel extends JPanel implements KeyListener{
 		this.gameFrame = gameFrame;
 	}
 	
+	private void drawBushOverlay(Graphics g) {
+	    int tileSize = GameConstants.TILE_SIZE;
+	    for(int y = 0; y < gameMap.getHeight(); y++) {
+	        for(int x = 0; x < gameMap.getWidth(); x++) {
+	            Tile tile = gameMap.getTile(x, y);
+	            if(tile instanceof Bush) {
+	                BufferedImage sprite = tile.getSprite();
+	                if(sprite != null) {
+	                    g.drawImage(sprite, x * tileSize, y * tileSize, tileSize, tileSize, null);
+	                }
+	                else {
+	                    g.setColor(tile.getColor());
+	                    g.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
+	                }
+	            }
+	        }
+	    }
+	}
+	
 	public synchronized void clearKeys() {
 	    wPressed = false;
 	    aPressed = false;
@@ -61,6 +86,7 @@ public class GamePanel extends JPanel implements KeyListener{
 		drawBullets(g);
 		drawEnemyTanks(g);
 		drawPowerUps(g);
+		drawBushOverlay(g);
 		drawGameStatus(g);
 	}
 	
@@ -102,8 +128,14 @@ public class GamePanel extends JPanel implements KeyListener{
 		int width = playerTank.getWidth();
 		int height = playerTank.getHeight();
 		
-		g.setColor(playerTank.getColor());
-		g.fillRect(x, y, width, height);
+		BufferedImage sprite = playerTank.getSprite();
+	    if(sprite != null) {
+	        g.drawImage(sprite, x, y, width, height, null);
+	    }
+	    else {
+	        g.setColor(playerTank.getColor());
+	        g.fillRect(x, y, width, height);
+	    }
 	}
 
 	private void drawTiles(Graphics g) {
@@ -111,10 +143,15 @@ public class GamePanel extends JPanel implements KeyListener{
 		for(int y = 0;y < gameMap.getHeight();y++) {
 			for(int x = 0;x < gameMap.getWidth();x++) {
 				Tile tile = gameMap.getTile(x, y);
-				g.setColor(tile.getColor());
-				g.fillRect(x * tileSize, y * tileSize,tileSize,tileSize);
-				g.setColor(Color.DARK_GRAY);
-				g.drawRect(x * tileSize, y * tileSize,tileSize,tileSize);
+				BufferedImage sprite = tile.getSprite();
+	            
+	            if(sprite != null) {
+	                g.drawImage(sprite, x * tileSize, y * tileSize, tileSize, tileSize, null);
+	            }
+	            else {
+	                g.setColor(tile.getColor());
+	                g.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
+	            }
 			}
 		}
 	}
@@ -124,11 +161,17 @@ public class GamePanel extends JPanel implements KeyListener{
 			return;
 		}
 		
-		for(Bullet bullet : gameLoop.getBullets()) {
-			Position p = bullet.getPosition();
-			g.setColor(bullet.getColor());
-			g.fillRect(p.getX(), p.getY(), bullet.getWidth(), bullet.getHeight());
-		}
+	    g.setColor(Color.LIGHT_GRAY);
+	    for(Bullet bullet : gameLoop.getBullets()) {
+	        Position p = bullet.getPosition();
+	        int cx = p.getX() + bullet.getWidth() / 2;
+	        int cy = p.getY() + bullet.getHeight() / 2;
+
+	        int bw = (bullet.getDirection() == Direction.UP || bullet.getDirection() == Direction.DOWN) ? 5 : 10;
+	        int bh = (bullet.getDirection() == Direction.UP || bullet.getDirection() == Direction.DOWN) ? 10 : 5;
+
+	        g.fillRect(cx - bw / 2, cy - bh / 2, bw, bh);
+	    }  
 	}
 	
 	private void drawEnemyTanks(Graphics g) {
@@ -142,8 +185,14 @@ public class GamePanel extends JPanel implements KeyListener{
 			}
 			
 			Position p = enemy.getPosition();
-			g.setColor(enemy.getColor());
-			g.fillRect(p.getX(), p.getY(), enemy.getWidth(), enemy.getHeight());
+			BufferedImage sprite = enemy.getSprite();
+	        if(sprite != null) {
+	            g.drawImage(sprite, p.getX(), p.getY(), enemy.getWidth(), enemy.getHeight(), null);
+	        }
+	        else {
+	            g.setColor(enemy.getColor());
+	            g.fillRect(p.getX(), p.getY(), enemy.getWidth(), enemy.getHeight());
+	        }
 		}
 	}
 	
@@ -167,20 +216,21 @@ public class GamePanel extends JPanel implements KeyListener{
 	        int w = powerUp.getWidth();
 	        int h = powerUp.getHeight();
 	        
-	        g.setColor(powerUp.getColor());
-	        g.fillRect(x, y, w, h);
-	        
-	        g.setColor(Color.BLACK);
-	        g.drawRect(x, y, w - 1, h - 1);
-	        g.drawRect(x + 1, y + 1, w - 3, h - 3);
-	        g.drawRect(x + 2, y + 2, w - 5, h - 5);
-	        
-	        g.setColor(Color.BLACK);
-	        g.setFont(new Font("Arial", Font.BOLD, 18));
-	        String symbol = powerUp.getSymbol();
-	        int textX = x + (w - g.getFontMetrics().stringWidth(symbol)) / 2;
-	        int textY = y + (h + g.getFontMetrics().getAscent()) / 2 - 2;
-	        g.drawString(symbol, textX, textY);
+	        BufferedImage sprite = powerUp.getSprite();
+	        if(sprite != null) {
+	            g.drawImage(sprite, x, y, w, h, null);
+	        }
+	        else {
+	            g.setColor(powerUp.getColor());
+	            g.fillRect(x, y, w, h);
+	            
+	            g.setColor(Color.BLACK);
+	            g.setFont(new Font("Arial", Font.BOLD, 18));
+	            String symbol = powerUp.getSymbol();
+	            int textX = x + (w - g.getFontMetrics().stringWidth(symbol)) / 2;
+	            int textY = y + (h + g.getFontMetrics().getAscent()) / 2 - 2;
+	            g.drawString(symbol, textX, textY);
+	        }
 	    }
 	}
 	
@@ -217,8 +267,19 @@ public class GamePanel extends JPanel implements KeyListener{
 			dPressed = true;
 		}
 		else if(key == KeyEvent.VK_SPACE) {
-			Bullet bullet = playerTank.shoot();
-			gameLoop.addBullet(bullet);
+			int maxBullets = (playerTank.getStarCount() >= 2) ? 2 : 1;
+		    
+		    int playerBullets = 0;
+		    for(Bullet b : gameLoop.getBullets()) {
+		        if(b.getOwner() == BulletOwner.PLAYER && b.isAlive()) {
+		            playerBullets++;
+		        }
+		    }
+		    
+		    if(playerBullets < maxBullets) {
+		        Bullet bullet = playerTank.shoot();
+		        gameLoop.addBullet(bullet);
+		    }
 		}
 		else if(key == KeyEvent.VK_P) {
 		    gameFrame.togglePause();

@@ -1,10 +1,12 @@
 package edu.yeditepe.cse212.battlecity.powerup;
 
 import java.awt.Color;
+import java.awt.image.BufferedImage;
 
 import edu.yeditepe.cse212.battlecity.game.GameLoop;
 import edu.yeditepe.cse212.battlecity.map.Position;
 import edu.yeditepe.cse212.battlecity.tank.PlayerTank;
+import edu.yeditepe.cse212.battlecity.util.ImageLoader;
 
 public class ClockPowerUp extends PowerUp{
 
@@ -38,6 +40,11 @@ public class ClockPowerUp extends PowerUp{
 	@Override
 	public String getSymbol() {
 		return "C";
+	}
+	
+	@Override
+	public BufferedImage getSprite() {
+		return ImageLoader.load("items/powerup_timer.png");
 	}
 
 }

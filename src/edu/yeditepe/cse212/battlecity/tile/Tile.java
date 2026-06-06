@@ -1,6 +1,7 @@
 package edu.yeditepe.cse212.battlecity.tile;
 
 import java.awt.Color;
+import java.awt.image.BufferedImage;
 
 import edu.yeditepe.cse212.battlecity.map.Position;
 
@@ -20,6 +21,7 @@ public abstract class Tile {
 	
 	public abstract void hit(int starCount);
 	public abstract Color getColor();
+	public abstract BufferedImage getSprite();
 	
 	protected void destroy() {
 		this.destroyed = true;

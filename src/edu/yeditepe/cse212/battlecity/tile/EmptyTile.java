@@ -1,6 +1,7 @@
 package edu.yeditepe.cse212.battlecity.tile;
 
 import java.awt.Color;
+import java.awt.image.BufferedImage;
 
 import edu.yeditepe.cse212.battlecity.map.Position;
 
@@ -17,6 +18,11 @@ public class EmptyTile extends Tile{
 	@Override
 	public Color getColor() {
 		return Color.BLACK;
+	}
+
+	@Override
+	public BufferedImage getSprite() {
+		return null;
 	}
 	
 }

@@ -73,4 +73,8 @@ public class Bullet {
 	public int getHeight() {
 		return GameConstants.BULLET_SIZE;
 	}
+	
+	public void setSpeed(int speed) {
+	    this.speed = speed;
+	}
 }

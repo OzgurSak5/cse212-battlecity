@@ -25,9 +25,9 @@ public class AboutDialog extends JDialog{
         title.setFont(new Font("Arial", Font.BOLD, 20));
         panel.add(title);
         
-        panel.add(new JLabel("Name: [SENİN ADIN SOYADIN]", SwingConstants.CENTER));
-        panel.add(new JLabel("Student Number: [OKUL NUMARAN]", SwingConstants.CENTER));
-        panel.add(new JLabel("Email: [@yeditepe email]", SwingConstants.CENTER));
+        panel.add(new JLabel("Name: Özgür Sak", SwingConstants.CENTER));
+        panel.add(new JLabel("Student Number: 20240702066", SwingConstants.CENTER));
+        panel.add(new JLabel("Email: ozgur.sak@std.yeditepe.edu.tr", SwingConstants.CENTER));
         panel.add(new JLabel("CSE212 - Spring 2026", SwingConstants.CENTER));
         
         add(panel, BorderLayout.CENTER);

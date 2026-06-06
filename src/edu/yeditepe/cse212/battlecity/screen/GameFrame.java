@@ -57,6 +57,18 @@ public class GameFrame extends JFrame{
         initializeGame();
 	}
 	
+	public GameFrame(String customMapPath) {
+	    setTitle("Battle City - Custom Map");
+	    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	    setResizable(false);
+	    levels = new Level[1];
+	    levels[0] = new Level(1, customMapPath, Difficulty.MEDIUM);
+	    currentLevelIndex = 0;
+	    menuBar = new GameMenuBar(this);
+	    setJMenuBar(menuBar);
+	    initializeGame();
+	}
+	
 	private void initializeGame() {
 		GameMap gameMap;
 		try {
@@ -161,6 +173,24 @@ public class GameFrame extends JFrame{
 	    }
 	    
 	    initializeGame();
+	}
+	
+	public void returnToTitle() {
+	    if(gameLoop != null) {
+	        gameLoop.stop();
+	    }
+	    if(enemyManager != null) {
+	        enemyManager.stop();
+	    }
+	    try {
+	        Thread.sleep(50);
+	    }
+	    catch (InterruptedException e) {
+	        Thread.currentThread().interrupt();
+	    }
+	    dispose();
+	    TitleScreenFrame title = new TitleScreenFrame();
+	    title.setVisible(true);
 	}
 	
 	public void togglePause() {

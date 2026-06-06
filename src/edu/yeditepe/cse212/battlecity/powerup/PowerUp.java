@@ -1,6 +1,7 @@
 package edu.yeditepe.cse212.battlecity.powerup;
 
 import java.awt.Color;
+import java.awt.image.BufferedImage;
 
 import edu.yeditepe.cse212.battlecity.game.GameConstants;
 import edu.yeditepe.cse212.battlecity.game.GameLoop;
@@ -22,6 +23,7 @@ public abstract class PowerUp {
 	
 	public abstract void apply(PlayerTank playerTank, GameLoop gameLoop);
 	public abstract Color getColor();
+	public abstract BufferedImage getSprite();
 	
 	public void collect() {
 	    collected = true;

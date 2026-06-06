@@ -13,4 +13,6 @@ public class GameConstants {
 	public static final int MAX_ENEMIES_ON_SCREEN = 4;
 	public static final int BULLET_SPEED = 7;
 	public static final int BULLET_SIZE = 14;
+	public static final int TANK_SIZE = 40;
+	public static final int BULLET_SPEED_FAST = 11;
 }
