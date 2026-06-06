@@ -114,6 +114,5 @@ This project deliberately stays within the topics covered in CSE212:
 
 ## Author
 
-**Özgür Sak** — 20240702066
-ozgur.sak@std.yeditepe.edu.tr
+**Özgür Sak**
 CSE212 — Spring 2026, Yeditepe University
